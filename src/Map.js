@@ -1,14 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
-
+import {camelize} from './utils/helpers';
 const evtNames = ['ready','click', 'dragend'];
 
-const camelize = function (str) {
-  return str.split(' ').map(function (word) {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  }).join('');
-}
 
 class Map extends React.Component {
   constructor(props) {
@@ -21,7 +16,7 @@ class Map extends React.Component {
       }
     };
   }
-  renderChildren() {
+  renderChildren = () => {
     const { children } = this.props;
     if (!children) return;
     return React.Children.map(children, c => {
@@ -32,7 +27,7 @@ class Map extends React.Component {
       });
     })
   }
-  loadMap() {
+  loadMap = () => {
     if (this.props && this.props.google) {
       // google is available
       const { google } = this.props;
@@ -55,7 +50,7 @@ class Map extends React.Component {
       });
     }
   }
-  handleEvent(evtName) {
+  handleEvent = (evtName) => {
       let timeout;
       const handlerName = `on${camelize(evtName)}`;
       return (e) => {
@@ -70,7 +65,7 @@ class Map extends React.Component {
         }, 0);
       }
   }
-  recenterMap() {
+  recenterMap = () => {
     const map = this.map;
     const curr = this.state.currentLocation;
     const google = this.props.google;
@@ -108,6 +103,7 @@ class Map extends React.Component {
     return (
       <div style={{ height: "100%" }} ref="map">
         Loading map...
+         {this.renderChildren()}
       </div>
     );
   }
@@ -120,9 +116,8 @@ Map.propTypes = {
   initialCenter: PropTypes.object,
   centerAroundCurrentLocation: PropTypes.bool,
   onMove: PropTypes.func,
-  // evtNames.forEach(e => Map.propTypes[camelize(e)] = T.func)
 };
-
+evtNames.forEach(e => Map.propTypes[camelize(e)] = PropTypes.func);
 
 Map.defaultProps = {
   zoom: 13,
